@@ -1,0 +1,11 @@
+cd /d/cancer_chatbot  # Adjust the path as necessary
+
+
+
+source chatbot_env/Scripts/activate  # Adjust the path if your environment is named differently
+
+
+
+python chatbot.py
+
+
