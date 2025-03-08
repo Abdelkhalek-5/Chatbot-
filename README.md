@@ -3,6 +3,8 @@
 Open the Terminal & Create a Virtual Environment  >>>>GIt bash
 
 >>python -m venv venv
+
+
 >>source venv/Scripts/activate
 
 
