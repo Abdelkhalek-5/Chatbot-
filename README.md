@@ -16,14 +16,21 @@ Open VS Code, and install the required Python libraries using the terminal:
 
 
 #📌Step 4: Download the Model
+
+
 Go to TheBloke’s HuggingFace LLaMA models.
+
 Download llama-2-7b-chat.ggmlv3.q4_0.bin (or a smaller version if needed).
+
 Create a folder named model/ in your VS Code project directory.
+
 Move the downloaded .bin file into model/.
 
 
 #📌 Step 5: Prepare Your Data
+
 Create a data/ folder inside your project directory.
+
 Add any PDF files you want to process into data/.
 
 
