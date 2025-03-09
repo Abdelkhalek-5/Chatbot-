@@ -9,13 +9,13 @@ Open the Terminal & Create a Virtual Environment  >>>>GIt bash
 
 
 
-#📌Step 1: Install Dependencies
+📌Step 1: Install Dependencies
 Open VS Code, and install the required Python libraries using the terminal:
 
 >>>pip install langchain langchain-community langchain-huggingface langchain-chroma chromadb sentence-transformers ctransformers pypdf asyncio
 
 
-#📌Step 4: Download the Model
+📌Step 4: Download the Model
 
 
 Go to TheBloke’s HuggingFace LLaMA models.
@@ -27,7 +27,7 @@ Create a folder named model/ in your VS Code project directory.
 Move the downloaded .bin file into model/.
 
 
-#📌 Step 5: Prepare Your Data
+📌 Step 5: Prepare Your Data
 
 Create a data/ folder inside your project directory.
 
@@ -35,7 +35,7 @@ Add any PDF files you want to process into data/.
 
 
 
-#📌 Step 6: Run the Chatbot
+📌 Step 6: Run the Chatbot
 Open VS Code terminal (Ctrl+ ` or View > Terminal).
 
 Run the chatbot:
