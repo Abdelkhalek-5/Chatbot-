@@ -8,35 +8,39 @@ from langchain_community.llms import CTransformers
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
 
-# ✅ Load PDF documents
+# ✅ Load PDF documents (limited for memory safety)
 def load_pdf(data_path):
     loader = DirectoryLoader(data_path, glob="*.pdf", loader_cls=PyPDFLoader)
     documents = loader.load()
+    documents = documents[:50]  # 🔒 Limit to 50 docs (can increase later)
+    print(f"✅ Loaded {len(documents)} PDF documents.")
     return documents
 
-# ✅ Split text into smaller chunks (Improves speed)
+# ✅ Split documents into small chunks
 def text_split(extracted_data):
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=100, chunk_overlap=5)  # Reduced chunk size for speed
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=100, chunk_overlap=5)
     text_chunks = text_splitter.split_documents(extracted_data)
+    print(f"✅ Split into {len(text_chunks)} text chunks.")
     return text_chunks
 
-# ✅ Setup ChromaDB (Optimized)
+# ✅ Setup ChromaDB (in-memory for safety)
 def setup_chromadb(text_chunks):
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    db_directory = "D:/Chat/chroma_db"
-    os.makedirs(db_directory, exist_ok=True)
+
+    # 🔁 In-memory only — no persist_directory or .persist()
     vectorstore = Chroma.from_documents(
         documents=text_chunks,
-        embedding=embeddings,
-        persist_directory=db_directory
+        embedding=embeddings
     )
+
+    print("🧠 Using in-memory ChromaDB (not saved to disk).")
     return vectorstore
 
-# ✅ Initialize LLaMA model (Optimized for speed)
+# ✅ Setup LLaMA model
 def setup_llama(vectorstore):
     prompt_template = """
     Use the summarized context to answer concisely.
-    
+
     Context: {context}
     Question: {question}
 
@@ -45,52 +49,56 @@ def setup_llama(vectorstore):
     PROMPT = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
 
     llm = CTransformers(
-        model="model/llama-2-7b-chat.ggmlv3.q4_0.bin",  
+        model="model/llama-2-7b-chat.ggmlv3.q4_0.bin",
         model_type="llama",
-        config={"max_new_tokens": 128, "temperature": 0.7, "batch_size": 8}  # Lower max tokens & batch processing
+        config={
+            "max_new_tokens": 64,  # 🔽 Lowered to save RAM
+            "temperature": 0.7,
+            "batch_size": 4         # 🔽 Lower batch size to avoid segfaults
+        }
     )
 
     qa = RetrievalQA.from_chain_type(
         llm=llm,
         chain_type="stuff",
-        retriever=vectorstore.as_retriever(search_kwargs={"k": 1}),  # Only fetch 1 document for speed
-        return_source_documents=False,  # Disable sources for extra speed
-        chain_type_kwargs={"prompt": PROMPT}  # Pass the prompt template here
+        retriever=vectorstore.as_retriever(search_kwargs={"k": 1}),
+        return_source_documents=False,
+        chain_type_kwargs={"prompt": PROMPT}
     )
     return qa
 
-# ✅ Load models and data (Runs once)
+# ✅ Load all models and vector DB
 def load_models_and_data():
-    extracted_data = load_pdf("data/")  
+    extracted_data = load_pdf("data/")
     text_chunks = text_split(extracted_data)
     vectorstore = setup_chromadb(text_chunks)
     qa = setup_llama(vectorstore)
     return qa
 
-# ✅ Asynchronous query function (Non-blocking)
+# ✅ Async query call
 async def query_qa(user_input, qa):
-    user_input = user_input[:150]  # Limit input size
-    result = await qa.ainvoke({"query": user_input})  # Use async version
+    user_input = user_input[:150]  # Trim long queries
+    result = await qa.ainvoke({"query": user_input})
     return result["result"]
 
-# ✅ Main chatbot function
+# ✅ Chat loop
 def main():
     print("\n🔄 Loading models and data...")
     qa = load_models_and_data()
     print("✅ Models and data loaded successfully.\n")
-    
-    print("\n💡 Fast Cancer Chatbot (Type 'exit' to quit)")
+
+    print("💬 Fast Cancer Chatbot (type 'exit' to quit)")
 
     while True:
-        user_input = input("\nEnter your question: ")
-        if user_input.lower() == "exit":
+        user_input = input("\n❓ You: ")
+        if user_input.lower() in ["exit", "quit", "bye"]:
             print("👋 Goodbye!")
             break
 
-        print("⏳ Thinking...")
-        result = asyncio.run(query_qa(user_input, qa))  # Async for speed
+        print("🤖 Thinking...")
+        result = asyncio.run(query_qa(user_input, qa))
         print(f"\n📝 Answer: {result}")
 
-# ✅ Run the chatbot
+# ✅ Entry point
 if __name__ == "__main__":
     main()
