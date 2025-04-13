@@ -1,42 +1,27 @@
-# Chatbot-
-
-Open the Terminal & Create a Virtual Environment  >>>>GIt bash
-
->>python -m venv venv
+To make the chatbot ready for use on your website, you can save the script into a Python file and then integrate it with your web framework (e.g., Flask, FastAPI, or Django). Below is the code saved into a professional module structure that is compatible with a web application.
 
 
->>source venv/Scripts/activate
-
-
-
-📌Step 1: Install Dependencies
-Open VS Code, and install the required Python libraries using the terminal:
-
->>>pip install langchain langchain-community langchain-huggingface langchain-chroma chromadb sentence-transformers ctransformers pypdf asyncio
-
-
-📌Step 4: Download the Model
-
-
-Go to TheBloke’s HuggingFace LLaMA models.
-
-Download llama-2-7b-chat.ggmlv3.q4_0.bin (or a smaller version if needed).
-
-Create a folder named model/ in your VS Code project directory.
-
-Move the downloaded .bin file into model/.
-
-
-📌 Step 5: Prepare Your Data
-
-Create a data/ folder inside your project directory.
-
-Add any PDF files you want to process into data/.
+File Structure
+Code
+chatbot/
+├── __init__.py
+├── main.py  # Contains the chatbot logic
+├── app.py   # Web integration (Flask, FastAPI, or Django app)
 
 
 
-📌 Step 6: Run the Chatbot
-Open VS Code terminal (Ctrl+ ` or View > Terminal).
+Steps to Use the Chatbot on Your Website:
 
-Run the chatbot:
->> python chatbot.py
+
+1.Install Dependencies: Make sure you have all the required Python libraries installed.
+>> in bash
+
+
+pip install flask langchain langchain_community langchain_huggingface langchain_chroma
+
+
+2.Run the Flask App:
+>>in bash 
+python chatbot/app.py 
+
+
