@@ -17,11 +17,15 @@ Steps to Use the Chatbot on Your Website:
 >> in bash
 
 
+
 pip install flask langchain langchain_community langchain_huggingface langchain_chroma
 
 
+
 2.Run the Flask App:
->>in bash 
+>>in bash
+
+
 python chatbot/app.py 
 
 
